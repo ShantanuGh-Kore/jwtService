@@ -10,19 +10,27 @@ app.use(bodyparser.urlencoded({
 }));
 
 app.post('/api/users/sts', function(req, res) {
-        var identity = req.body.identity;
+        var fName,lName;
+        if(req.body && req.body.identity){
+            var identity = req.body.identity;
+        }        
         var clientId = config.credentials.appId//req.body.clientId;
         var clientSecret = config.credentials.apikey//req.body.clientSecret;
         var isAnonymous = req.body.isAnonymous || false;
         var aud = req.body.aud || "https://idproxy.kore.com/authorize";
-        var fName = req.body.fName;
-        var lName = req.body.lName;
+        if(req.body && req.body.fName){
+            fName = req.body.fName;
+        }
+        if (req.body && req.body.lName){
+            lName = req.body.lName;
+        }
+        
         var options = {
             "iat": new Date().getTime(),
             "exp": new Date(new Date().getTime() + 24 * 60 * 60 * 1000).getTime(),
             "aud": aud,
             "iss": clientId,
-            "sub": identity,
+            "sub": identity || "",
             "isAnonymous": isAnonymous
         }
         var headers = {};
